@@ -9,11 +9,11 @@
     },
   "ORACLECLIENT":"D:\\oracleClient64",
   "MAILCONFIG":{
-       "MAILTO_LIST":["wudi@xiyuetech.com"],
-       "MAIL_HOST":"smtp.exmail.qq.com",
-       "MAIL_USER":"wudi@xiyuetech.com",
+       "MAILTO_LIST":["xxx@xxxx.com"],
+       "MAIL_HOST":"smtp.xxxx.com",
+       "MAIL_USER":"xxx@xxxx.com",
        "MAIL_PWD":"abc123",
-       "MAIL_POSTFIX":"xiyuetech.com"
+       "MAIL_POSTFIX":"xxxx.com"
     },
     "TASKCONFIG":[
       {
