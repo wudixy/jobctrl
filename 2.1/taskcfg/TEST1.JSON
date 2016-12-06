@@ -1,0 +1,77 @@
+{
+  "TASKNAME":"TEST",
+  "WAITSEC":5,
+  "MAXJOB":5,
+  "LOGLEVEL":"DEBUG",
+  "ARCONFIG":{
+       "PRO_DIR": "C:\\Program Files\\Attunity\\Replicate\\bin",
+       "DATA_DIR":"C:\\Program Files\\Attunity\\Replicate\\data"
+    },
+  "ORACLECLIENT":"D:\\oracleClient64",
+  "MAILCONFIG":{
+       "MAILTO_LIST":["xxx@xxxx.com"],
+       "MAIL_HOST":"smtp.xxxx.com",
+       "MAIL_USER":"xxx@xxxx.com",
+       "MAIL_PWD":"password",
+       "MAIL_POSTFIX":"xxxx.com"
+    },
+    "TASKCONFIG":[
+      {
+        "JOBID":"J1",
+        "DEP":"",
+        "JOBTYPE":"WAIT_DB_FLAG",
+        "CONNECTINFO":{
+          "DBID":"d1",
+          "TYPE":"ORACLE",
+          "TNS":"MY-DEV-203.2-TEST",
+          "USER":"test",
+          "PWD" :"test"
+       },
+        "EXECUTE":"select flag from flagtest where flag=2",
+        "PARAM":{"FLAG":2,"WAITSEC":5,"TIMEOUTCNT":6},
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J2",
+        "DEP":"J1",
+        "JOBTYPE":"RUN_AR_TASK",
+        "EXECUTE":"TEST",
+        "PARAM":{"OPERATION":1,"FLAGS":1},
+        "SENTMAIL":0
+        },
+      {
+        "JOBID":"J3",
+        "DEP":"J2",
+        "JOBTYPE":"WAIT_AR_TASK",
+        "EXECUTE":"TEST",
+        "PARAM":{"WAITSEC":10,"TIMEOUTCNT":60},
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J4",
+        "DEP":"J1",
+        "JOBTYPE":"DB_PROC",
+        "DBID":"d1",
+        "EXECUTE":"sp_t1",
+        "CONNECTINFO":{
+          "DBID":"d1",
+          "TYPE":"ORACLE",
+          "TNS":"MY-DEV-203.2-TEST",
+          "USER":"test",
+          "PWD" :"test"
+       },
+        "PARAM":[1,"1"],
+        "SUCESSEXPRESSION":"rcd[0]==2",
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J5",
+        "DEP":"",
+        "JOBTYPE":"SHELL",
+        "EXECUTE":"tmp.cmd",
+        "PARAM":"",
+        "SUCESSEXPRESSION":"rcd=='0'",
+        "SENTMAIL":0
+      }
+    ]
+}

@@ -1,0 +1,1 @@
+echo 'wudi' >> d:\wudi.txt

@@ -1,0 +1,131 @@
+{
+  "TASKNAME":"TEST",
+  "WAITSEC":5,
+  "MAXJOB":5,
+  "LOGLEVEL":"DEBUG",
+  "LOGSHOWCONSOLE":false,
+  "ARCONFIG":{
+       "PRO_DIR": "D:/attunity/bin",
+       "DATA_DIR":"D:/attunity/Data"
+    },
+  "ORACLECLIENT":"D:\\oracleClient64",
+  "MAILCONFIG":{
+       "MAILTO_LIST":["abc@xxx.com"],
+       "MAIL_HOST":"smtp.xxx.com",
+       "MAIL_USER":"xxx@xxx.com",
+       "MAIL_PWD":"password",
+       "MAIL_POSTFIX":"xxx.com"
+  },
+  "TASKCONFIG":[
+      {
+        "JOBID":"J_WAITFLAG",
+        "DEP":"",
+        "DES":"等待flagtest标志位变为2",
+        "JOBTYPE":"WAIT_DB_FLAG",
+        "CONNECTINFO":{
+            "DBID":"d1",
+            "TYPE":"ORACLE",
+            "TNS":"MY-DEV-203.2-TEST",
+            "USER":"test",
+            "PWD" :"test"},
+        "EXECUTE":"select flag from flagtest where flag=2",
+        "PARAM":{"FLAG":2,"WAITSEC":5,"TIMEOUTCNT":6},
+        "SENTMAIL":1
+      },
+      {
+        "JOBID":"J_WAITFLAG2",
+        "DES":"和J_WAITFLAG相同，改不同方式实现",
+        "DEP":"",
+        "JOBTYPE":"SELECTDBSQL",
+        "CONNECTINFO":{
+            "DBID":"d1",
+            "TYPE":"ORACLE",
+            "TNS":"MY-DEV-203.2-TEST",
+            "USER":"test",
+            "PWD" :"test"},
+        "EXECUTE":"select flag from flagtest where flag=2",
+        "PARAM":{},
+        "SUCESSEXPRESSION":"rcd[0]==2",
+        "LOOP":{"WAITSEC":2,"TIMEOUTCNT":5},
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J_RUNARTEST",
+        "DEP":"J_WAITFLAG,J_WAITFLAG2",
+        "DES":"运行Attunity Replicate task,test full load only",
+        "JOBTYPE":"RUN_AR_TASK",
+        "EXECUTE":"TEST",
+        "PARAM":{"OPERATION":1,"FLAGS":1},
+        "ARCONFIG":{
+          "PRO_DIR": "D:/attunity/bin",
+          "DATA_DIR":"D:/attunity/Data"
+        },
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J_WAIT_ARTEST1",
+        "DEP":"J_RUNARTEST",
+        "DES":"等该AR TASK运行完成",
+        "JOBTYPE":"GET_AR_TASK_STATUS",
+        "EXECUTE":"TEST",
+        "SUCESSEXPRESSION":"rcd['state']=='STOPPED' and rcd['full_load_completed']=='True'",
+        "LOOP":{"WAITSEC":2,"TIMEOUTCNT":5},
+        "PARAM":{},
+        "ARCONFIG":{
+          "PRO_DIR": "D:/attunity/bin",
+          "DATA_DIR":"D:/attunity/Data"
+        },
+        "SENTMAIL":0
+      },
+      
+      {
+        "JOBID":"J_WAIT_ARTEST2",
+        "DEP":"J_RUNARTEST",
+        "DES":"等该AR TASK运行完成,方式二",
+        "JOBTYPE":"WAIT_AR_TASK",
+        "EXECUTE":"TEST",
+        "PARAM":{"WAITSEC":2,"TIMEOUTCNT":5},
+        "ARCONFIG":{
+          "PRO_DIR": "D:/attunity/bin",
+          "DATA_DIR":"D:/attunity/Data"
+        },
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J4",
+        "DEP":"J_WAIT_ARTEST1,J_WAIT_ARTEST2",
+        "DES":"执行存储过程",
+        "JOBTYPE":"DB_PROC",
+        "DBID":"d1",
+        "EXECUTE":"sp_t1",
+        "CONNECTINFO":{
+            "DBID":"d1",
+            "TYPE":"ORACLE",
+            "TNS":"MY-DEV-203.2-TEST",
+            "USER":"test",
+            "PWD" :"test"},
+        "PARAM":[1,"1"],
+        "SUCESSEXPRESSION":"rcd[0]==2",
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J5",
+        "DEP":"",
+        "DES":"执行脚本",
+        "JOBTYPE":"SHELL",
+        "EXECUTE":"tmp.cmd",
+        "PARAM":"",
+        "SUCESSEXPRESSION":"rcd=='0'",
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J6",
+        "DEP":"J4",
+        "JOBTYPE":"GET_JOB_STATE",
+        "EXECUTE":"J4",
+        "SUCESSEXPRESSION":"rcd['status']=='FINISH' and str(rcd['msg'].split(';')[0])=='2'",
+        "SENTMAIL":0,
+        "PARAM":""
+      }
+    ]
+}

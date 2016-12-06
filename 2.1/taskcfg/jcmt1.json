@@ -1,0 +1,36 @@
+{
+  "TASKNAME":"jcmt1",
+  "WAITSEC":5,
+  "MAXJOB":5,
+  "LOGLEVEL":"DEBUG",
+  "MAILCONFIG":{
+       "MAILTO_LIST":["xxx@xxxx.com"],
+       "MAIL_HOST":"smtp.xxxx.com",
+       "MAIL_USER":"xxx@xxxx.com",
+       "MAIL_PWD":"password",
+       "MAIL_POSTFIX":"xxxx.com"
+  },
+  "TASKCONFIG":[
+      {
+        "JOBID":"J1",
+        "DEP":"",
+        "DES":"执行脚本",
+        "JOBTYPE":"SHELL",
+        "EXECUTE":"testjob/t1.cmd",
+        "PARAM":"",
+        "SUCESSEXPRESSION":"rcd=='0'",
+        "SENTMAIL":0
+      },
+      {
+        "JOBID":"J2",
+        "DEP":"",
+        "DES":"执行脚本",
+        "JOBTYPE":"SHELL",
+        "EXECUTE":"testjob/t2.cmd",
+        "PARAM":"",
+        "SUCESSEXPRESSION":"rcd=='0'",
+        "SENTMAIL":0
+      }
+
+    ]
+}
